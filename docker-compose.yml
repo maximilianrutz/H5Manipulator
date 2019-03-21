@@ -1,0 +1,11 @@
+version: '3'
+services:
+ neurophys:
+  image: maxtue/neurophys
+  ports: 
+   - "8888:8888"
+  volumes:
+   - /c/Users/Admin:/src/hostadmin
+   - /f:/src/external
+  stdin_open: true
+  tty: true
