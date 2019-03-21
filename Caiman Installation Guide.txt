@@ -1,0 +1,5 @@
+Steps to install the Docker Container: 
+- 
+
+Steps to start jupyter notebook:
+-
