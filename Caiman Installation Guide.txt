@@ -10,3 +10,9 @@ Steps to start jupyter notebook:
 - put the files "docker-compose.yml" and "caiman.sh" into the folder C:\Program Files\Docker Toolbox
 - start "Docker Quickstart Terminal", type "caiman.sh" and wait until the jupyter notebook starts in google chrome
 - refresh the google chrome page if necessary
+
+Open and save files with jupyter notebook:
+- the home directory in google chrome will show 3 folders:
+  - CaImAn: the CaImAn files from https://github.com/flatironinstitute/CaImAn --- FILES SAVED HERE WILL BE GONE AT RESTART
+  - external: save and work with files on USB drive or external drive mounted in /f
+  - hostadmin: save and work with files on host-pc at C:\Users\Admin
