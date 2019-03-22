@@ -1,5 +1,12 @@
-Steps to install the Docker Container: 
-- 
+Steps to install Docker:
+- download "Get Docker Toolbox for Windows" from https://docs.docker.com/toolbox/overview/
+- run the setup with default settings
+
+Steps to download the Docker Container: 
+- start "Docker Quickstart Terminal" and wait until the whale comes up
+- type "docker pull maxtue/neurophys" and wait for the download to finish
 
 Steps to start jupyter notebook:
--
+- put the files "docker-compose.yml" and "caiman.sh" into the folder C:\Program Files\Docker Toolbox
+- start "Docker Quickstart Terminal", type "caiman.sh" and wait until the jupyter notebook starts in google chrome
+- refresh the google chrome page if necessary
