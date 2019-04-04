@@ -1,11 +1,12 @@
 version: '3'
 services:
- neurophys:
+ caiman:
   image: maxtue/neurophys
   ports: 
    - "8888:8888"
   volumes:
-   - /c/Users/Admin:/src/hostadmin
-   - /f:/src/external
+   - /c/Users/Admin/Analysis/:/root/caiman_data/demos/notebooks/Analysis/
+   - /f/caiman/:/root/caiman_data/demos/notebooks/extdrive/
+  command: bash
   stdin_open: true
   tty: true
