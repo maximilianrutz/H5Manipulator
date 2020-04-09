@@ -11,7 +11,7 @@ black = "*"
 pyinstaller = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "*"
 
 [pipenv]
-allow_prereleases = true
+allow_prereleases = false
