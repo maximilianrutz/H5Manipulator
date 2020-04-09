@@ -15,12 +15,17 @@ from tkinter import filedialog as fd
 import os
 
 
-class MainWindow:
+class GUI:
     """ Initialization """
 
     def set_variables(self):
         self.gui_height = 100
         self.gui_width = 200
+        self.set_path_to_ffmpeg()
+
+    def set_path_to_ffmpeg(self):
+        if True:
+            self.convert_ffmpeg_path = r".\dependencies\windows\ffmpeg\bin\ffmpeg.exe"
 
     def define_gui_elements(self):
         self.root.title("File Converter")
@@ -41,7 +46,8 @@ class MainWindow:
     def convert_file(self):
         self.load_file()
         self.save_file()
-        self.convert_command = f"ffmpeg -i {self.load_filename} {self.save_filename}"
+        self.convert_flag = f" -i {self.load_filename} {self.save_filename}"
+        self.convert_command = self.convert_ffmpeg_path + self.convert_flag        
         os.system(self.convert_command)
 
     def activate_gui_elements(self):
@@ -63,5 +69,5 @@ class MainWindow:
 
 
 if __name__ == "__main__":
-    program = MainWindow()
+    program = GUI()
     program.main()
