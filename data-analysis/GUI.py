@@ -1,3 +1,15 @@
+"""
+how to make executables with pyinstaller
+on Mac: pyinstaller
+--onefile
+--icon=icons/mac.png
+--add-binary='/System/Library/Frameworks/Tk.framework/Tk':'tk'
+--add-binary='/System/Library/Frameworks/Tcl.framework/Tcl':'tcl'
+GUI.py
+on Windows:
+
+"""
+
 import tkinter as tk
 from tkinter import filedialog as fd
 import os
