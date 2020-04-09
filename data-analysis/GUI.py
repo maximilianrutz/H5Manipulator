@@ -3,7 +3,7 @@ from tkinter import filedialog as fd
 import os
 
 
-class Pipeline:
+class MainWindow:
     """ Initialization """
 
     def set_variables(self):
@@ -51,5 +51,5 @@ class Pipeline:
 
 
 if __name__ == "__main__":
-    program = Pipeline()
+    program = MainWindow()
     program.main()
