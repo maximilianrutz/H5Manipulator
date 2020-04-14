@@ -25,6 +25,8 @@ class GUI:
 
     def set_path_to_ffmpeg(self):
         if True:
+            self.convert_ffmpeg_path = "ffmpeg"
+        else:
             self.convert_ffmpeg_path = r".\dependencies\windows\ffmpeg\bin\ffmpeg.exe"
 
     def define_gui_elements(self):
@@ -47,7 +49,7 @@ class GUI:
         self.load_file()
         self.save_file()
         self.convert_flag = f" -i {self.load_filename} {self.save_filename}"
-        self.convert_command = self.convert_ffmpeg_path + self.convert_flag        
+        self.convert_command = self.convert_ffmpeg_path + self.convert_flag
         os.system(self.convert_command)
 
     def activate_gui_elements(self):
