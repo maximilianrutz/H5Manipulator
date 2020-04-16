@@ -1,6 +1,5 @@
 """
 TODO:
-- include ffmpeg into executable
 - return to mainloop when load data is cancelled without asking for save data
 - dropdown menu for convert to file endings
 - convert all files of a directory to chosen format: https://stackoverflow.com/questions/42438380/ffmpeg-in-python-script
@@ -17,7 +16,7 @@ on Mac: pyinstaller
 GUI.py
 
 on Windows: 
-pyinstaller --onefile --add-binary=".\ffmpeg.exe;." GUI.py
+pyinstaller --onefile --add-binary="dependencies\windows\ffmpeg.exe;." GUI.py
 """
 
 import tkinter as tk
@@ -36,10 +35,9 @@ class GUI:
 
     def set_path_to_ffmpeg(self):
         try:
-            base_path = sys._MEIPASS
+            self.convert_ffmpeg_path = os.path.join(sys._MEIPASS, "ffmpeg.exe")
         except AttributeError:
-            base_path = os.path.abspath(".")
-        self.convert_ffmpeg_path = os.path.join(base_path, "ffmpeg.exe")
+            self.convert_ffmpeg_path = os.path.join(os.path.abspath("."), r"dependencies\windows\ffmpeg.exe")
 
     def define_gui_elements(self):
         self.root.title("File Converter")
@@ -60,8 +58,8 @@ class GUI:
     def convert_file(self):
         self.load_file()
         self.save_file()
-        self.convert_flag = f'" -i {self.load_filename} {self.save_filename}"'
-        self.convert_command = self.convert_ffmpeg_path# + self.convert_flag
+        self.convert_flag = f" -i {self.load_filename} {self.save_filename}"
+        self.convert_command = self.convert_ffmpeg_path + self.convert_flag
         print(self.convert_command)
         os.system(self.convert_command)
 
