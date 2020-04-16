@@ -1,5 +1,9 @@
 """
-TODO: return to mainloop when load data is cancelled without asking for save data
+TODO: 
+- include ffmpeg into executable
+- return to mainloop when load data is cancelled without asking for save data
+- dropdown menu for convert to file endings
+- convert all files of a directory to chosen format: https://stackoverflow.com/questions/42438380/ffmpeg-in-python-script
 
 how to make executables with pyinstaller
 
@@ -14,6 +18,7 @@ GUI.py
 on Windows: pyinstaller
 --onefile
 --windowed
+--add-binary ".\dependencies\windows\ffmpeg\bin\ffmpeg.exe;."
 --icon=icons/mac.png
 GUI.py
 """
@@ -34,7 +39,7 @@ class GUI:
 
     def set_path_to_ffmpeg(self):
         if True:
-            self.convert_ffmpeg_path = "ffmpeg"
+            self.convert_ffmpeg_path = r".\ffmpeg.exe"
         else:
             self.convert_ffmpeg_path = self.filedir_path + r"\dependencies\windows\ffmpeg\bin\ffmpeg.exe"
 
