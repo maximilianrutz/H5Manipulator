@@ -3,7 +3,10 @@ TODO:
 - return to mainloop when load data is cancelled without asking for save data
 - dropdown menu for convert to file endings
 - convert all files of a directory to chosen format: https://stackoverflow.com/questions/42438380/ffmpeg-in-python-script
-- default open last used directory when loading file
+- only open terminal window or error window in case of error (for debugging)
+- show progress bar with name of file to be converted
+- why the slow startup?
+- create a publicly accessible doc on github for error reporting and feature suggestions
 
 how to make executables with pyinstaller
 
@@ -15,7 +18,7 @@ on Mac: pyinstaller
 --add-binary='/System/Library/Frameworks/Tcl.framework/Tcl':'tcl'
 GUI.py
 
-on Windows: 
+on Windows:
 pyinstaller --onefile --add-binary="dependencies\windows\ffmpeg.exe;." GUI.py
 """
 
@@ -37,7 +40,9 @@ class GUI:
         try:
             self.convert_ffmpeg_path = os.path.join(sys._MEIPASS, "ffmpeg.exe")
         except AttributeError:
-            self.convert_ffmpeg_path = os.path.join(os.path.abspath("."), r"dependencies\windows\ffmpeg.exe")
+            self.convert_ffmpeg_path = os.path.join(
+                os.path.abspath("."), r"dependencies\windows\ffmpeg.exe"
+            )
 
     def define_gui_elements(self):
         self.root.title("File Converter")
