@@ -4,7 +4,7 @@ data/
 .DS_Store
 test*
 dependencies/
-executables/
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
