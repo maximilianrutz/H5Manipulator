@@ -1,13 +1,21 @@
 """
+TODO: return to mainloop when load data is cancelled without asking for save data
+
 how to make executables with pyinstaller
+
 on Mac: pyinstaller
 --onefile
+--windowed
 --icon=icons/mac.png
 --add-binary='/System/Library/Frameworks/Tk.framework/Tk':'tk'
 --add-binary='/System/Library/Frameworks/Tcl.framework/Tcl':'tcl'
 GUI.py
-on Windows:
 
+on Windows: pyinstaller
+--onefile
+--windowed
+--icon=icons/mac.png
+GUI.py
 """
 
 import tkinter as tk
@@ -21,13 +29,14 @@ class GUI:
     def set_variables(self):
         self.gui_height = 100
         self.gui_width = 200
+        self.filedir_path = os.path.dirname(os.path.abspath(__file__))
         self.set_path_to_ffmpeg()
 
     def set_path_to_ffmpeg(self):
         if True:
             self.convert_ffmpeg_path = "ffmpeg"
         else:
-            self.convert_ffmpeg_path = r".\dependencies\windows\ffmpeg\bin\ffmpeg.exe"
+            self.convert_ffmpeg_path = self.filedir_path + r"\dependencies\windows\ffmpeg\bin\ffmpeg.exe"
 
     def define_gui_elements(self):
         self.root.title("File Converter")
@@ -49,7 +58,7 @@ class GUI:
         self.load_file()
         self.save_file()
         self.convert_flag = f" -i {self.load_filename} {self.save_filename}"
-        self.convert_command = self.convert_ffmpeg_path + self.convert_flag
+        self.convert_command = self.convert_ffmpeg_path + self.convert_flag        
         os.system(self.convert_command)
 
     def activate_gui_elements(self):
