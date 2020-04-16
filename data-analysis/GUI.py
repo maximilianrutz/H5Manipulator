@@ -1,5 +1,6 @@
 """
 TODO:
+- write a README in github repo with idiot proof instructions
 - return to mainloop when load data is cancelled without asking for save data
 - dropdown menu for convert to file endings
 - convert all files of a directory to chosen format: https://stackoverflow.com/questions/42438380/ffmpeg-in-python-script
@@ -7,6 +8,7 @@ TODO:
 - show progress bar with name of file to be converted
 - why the slow startup?
 - create a publicly accessible doc on github for error reporting and feature suggestions
+- add icons to executables
 
 how to make executables with pyinstaller
 
