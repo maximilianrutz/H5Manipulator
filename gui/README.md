@@ -1,5 +1,5 @@
-# NeurophysTuebingen
-Scripts for the analysis of neurophysiological data
+# gui
+A gui interface to convert and manipulate video files
 
 ## Getting Started
 
