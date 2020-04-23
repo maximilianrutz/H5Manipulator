@@ -1,7 +1,6 @@
 """
 TODO:
 - write a README in github repo with idiot proof instructions
-- return to mainloop when load data is cancelled without asking for save data
 - dropdown menu for convert to file endings
 - convert all files of a directory to chosen format: https://stackoverflow.com/questions/42438380/ffmpeg-in-python-script
 - only open terminal window or error window in case of error (for debugging)
@@ -21,7 +20,7 @@ on Mac: pyinstaller
 GUI.py
 
 on Windows:
-pyinstaller --onefile --add-binary="dependencies\windows\ffmpeg.exe;." GUI.py
+pyinstaller --onefile --add-binary="dependencies\windows\ffmpeg.exe;." gui.py
 """
 
 import tkinter as tk
@@ -30,7 +29,7 @@ import os
 import sys
 
 
-class GUI:
+class Gui:
     """ Initialization """
 
     def set_variables(self):
@@ -42,9 +41,7 @@ class GUI:
         try:
             self.convert_ffmpeg_path = os.path.join(sys._MEIPASS, "ffmpeg.exe")
         except AttributeError:
-            self.convert_ffmpeg_path = os.path.join(
-                os.path.abspath("."), r"dependencies\windows\ffmpeg.exe"
-            )
+            self.convert_ffmpeg_path = "ffmpeg"
 
     def define_gui_elements(self):
         self.root.title("File Converter")
@@ -59,13 +56,16 @@ class GUI:
     def load_file(self):
         self.load_filename = fd.askopenfilename()
 
+
     def save_file(self):
         self.save_filename = fd.asksaveasfilename()
 
     def convert_file(self):
         self.load_file()
+        if not self.load_filename:
+            return
         self.save_file()
-        self.convert_flag = f" -i {self.load_filename} {self.save_filename}"
+        self.convert_flag = f" -i {self.load_filename} -codec copy {self.save_filename}"
         self.convert_command = self.convert_ffmpeg_path + self.convert_flag
         print(self.convert_command)
         os.system(self.convert_command)
@@ -89,5 +89,5 @@ class GUI:
 
 
 if __name__ == "__main__":
-    program = GUI()
+    program = Gui()
     program.main()
