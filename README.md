@@ -1,5 +1,5 @@
 # NeurophysTuebingen
-Scripts for the analysis of neurophysiological data
+Short scripts and programs for the analysis of neurophysiological data at the Institute for Neurophyiology at the University of Tuebingen
 
 ## Getting Started
 
