@@ -4,7 +4,7 @@ Steps to install Docker:
 
 Steps to download the Docker Container: 
 - start "Docker Quickstart Terminal" and wait until the whale comes up
-- type "docker pull maxtue/neurophys" and wait for the download to finish
+- type "docker pull maxtue/NeurophysTuebingen" and wait for the download to finish
 
 Steps to start jupyter notebook:
 - put the files "docker-compose.yml" and "caiman.sh" into the folder C:\Program Files\Docker Toolbox
