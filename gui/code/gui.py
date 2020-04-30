@@ -1,17 +1,18 @@
 """
 TODO:
-- make bitrate of codec choosable: Linus what is a codec for Marco https://www.youtube.com/watch?v=GhWki9a7s18
-- write a README in github repo with idiot proof instructions
-- convert all files of a directory to chosen format: https://stackoverflow.com/questions/42438380/ffmpeg-in-python-script
-- only open terminal window or error window in case of error (for debugging)
-- show progress bar with name of file to be converted
-- why the slow startup?
-- create a publicly accessible doc on github for error reporting and feature suggestions
+-  read avi save as multitiff via .py, --windowed, extra box in gui for output
+
+TODISCUSS:
+- set --windowed flag?
+- open hdf file tree?
 
 DONETODAY:
- - add windows icon
- - cancel empty load file
- - rejected adding dropdown menu
+- mp4, avi
+- open h5 and multitiff
+- h5py automatically detect video files
+- tickbox with names 
+- if size(dataset) == 1: save one file
+- h5 files a lot of small files - save as multitiffs
 
 how to make executables with pyinstaller
 
@@ -21,7 +22,7 @@ on Mac: pyinstaller
 --icon=icons/mac.png
 --add-binary='/System/Library/Frameworks/Tk.framework/Tk':'tk'
 --add-binary='/System/Library/Frameworks/Tcl.framework/Tcl':'tcl'
-GUI.py
+gui.py
 
 on Windows:
 pyinstaller --onefile --add-binary="dependencies\windows\ffmpeg.exe;." --icon=dependencies\windows\windows_icon.ico gui.py
@@ -72,7 +73,6 @@ class Gui:
             return
         self.convert_flag = f" -i {self.load_filename} -codec copy {self.save_filename}"
         self.convert_command = self.convert_ffmpeg_path + self.convert_flag
-        print(self.convert_command)
         os.system(self.convert_command)
 
     def activate_gui_elements(self):
