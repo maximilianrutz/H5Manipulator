@@ -5,10 +5,13 @@ verify_ssl = true
 
 [dev-packages]
 pylint = "*"
-black = "*"
+black = "==19.10b0"
 
 [packages]
 pyinstaller = "*"
+opencv-python = "*"
+pillow = "*"
+numpy = "*"
 
 [requires]
 python_version = "*"
