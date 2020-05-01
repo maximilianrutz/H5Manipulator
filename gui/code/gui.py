@@ -37,8 +37,8 @@ class Gui:
     """ Initialization """
 
     def __init__(self):
-        gui_height = 400
-        gui_width = 800
+        gui_height = 200
+        gui_width = 300
         self.tk_root = tk.Tk()
         self.tk_root.title("Data Converter Neurophysiology Tuebingen")
         self.tk_canvas = tk.Canvas(self.tk_root, height=gui_height, width=gui_width)
@@ -49,13 +49,6 @@ class Gui:
         self.tk_save_button = tk.Button(
             self.tk_frame, text="Save file", command=self.save_video
         )
-        self.tk_printout = tkst.ScrolledText(
-            self.tk_frame,
-            wrap=tk.WORD,
-            width=int(0.5 * gui_width),
-            height=int(0.5 * gui_height),
-        )
-
         self.frames = []
 
     def load_video(self):
@@ -69,8 +62,6 @@ class Gui:
             print(f"Unknown file type of file {filename}")
 
     def load_frames(self, filename):
-        self.tk_printout.place(relx=0, rely=1, anchor="sw")
-
         cap = cv2.VideoCapture(filename)
         frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -82,15 +73,8 @@ class Gui:
         frame_counter = 0
         ret = True
         while frame_counter < frame_count and ret:
-            self.tk_printout.insert(
-                tk.INSERT, f"Loading frame {frame_counter + 1}/{frame_count}\n"
-            )
-
             ret, frame = cap.read()
             self.frames[frame_counter] = frame
-
-            img = ImageTk.PhotoImage(image=Image.fromarray(frame))
-            self.tk_canvas.create_image(50, 50, image=img, anchor="se")
             frame_counter += 1
         cap.release()
 
