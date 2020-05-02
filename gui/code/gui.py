@@ -36,7 +36,7 @@ class DataManipulator:
 
     def __init__(self):
         gui_height = 300
-        gui_width = 600
+        gui_width = 400
         self.filetypes_load = [("avi", ".avi")]
         self.filetypes_save = [("tiff", ".tif .tiff")]
         self.filepath = ""
@@ -61,12 +61,12 @@ class DataManipulator:
         self.tk_printout = tkst.ScrolledText(
             self.tk_canvas_main,
             wrap=tk.WORD,
-            font=("*", 14),
+            font=("ComicSans", 12),
             borderwidth=2,
             relief="solid",
         )
         self.active_file_label = tk.Label(
-            self.tk_canvas_main, justify="left", text="Active file:", bg="lightgreen"
+            self.tk_canvas_main, justify="left", text="Active file:"
         )
 
     def load_video(self):
