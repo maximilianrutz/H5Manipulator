@@ -1,9 +1,6 @@
 """
 TODO:
--  read avi save as multitiff via .py, --windowed, extra box in gui for output
-
-DONETODAY:
-- mp4, avi
+- mp4
 - open h5 and multitiff
 - h5py automatically detect video files
 - tickbox with names
@@ -21,7 +18,7 @@ on Mac: pyinstaller
 gui.py
 
 on Windows:
-pyinstaller --onefile --add-binary="dependencies\windows\ffmpeg.exe;." --icon=dependencies\windows\windows_icon.ico gui.py
+pyinstaller --onefile --icon=dependencies\windows\windows_icon.ico gui.py
 """
 
 import tkinter as tk
@@ -38,8 +35,8 @@ class Gui:
     """ Initialization """
 
     def __init__(self):
-        gui_height = 400
-        gui_width = 800
+        gui_height = 300
+        gui_width = 400
         self.tk_root = tk.Tk()
         self.tk_root.title("Data Converter Neurophysiology Tuebingen")
         self.tk_canvas = tk.Canvas(self.tk_root, height=gui_height, width=gui_width)
@@ -51,7 +48,6 @@ class Gui:
             self.tk_frame, text="Save file", command=self.save_video
         )
         self.tk_printout = tkst.ScrolledText(self.tk_canvas, wrap=tk.WORD)
-
         self.frames = []
 
     def load_video(self):
@@ -65,8 +61,7 @@ class Gui:
             print(f"Unknown file type of file {filename}")
 
     def load_frames(self, filename):
-        self.tk_printout.place(relx=0, rely=1, anchor="sw")
-
+        self.tk_printout.place(relx=0, rely=1, relwidth=0.5, relheight=0.5, anchor="sw")
         cap = cv2.VideoCapture(filename)
         frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -123,7 +118,6 @@ class Gui:
         self.tk_frame.place(relwidth=1, relheight=1)
         self.tk_load_button.place(relx=0, rely=0, anchor="nw")
         self.tk_save_button.place(relx=1, rely=0, anchor="ne")
-        self.tk_printout.place(relwidth=0.5, relheight=0.5, anchor="sw")
 
     def main(self):
         self.activate_gui_elements()
