@@ -46,7 +46,9 @@ class Gui:
         self.tk_save_button = tk.Button(
             self.tk_frame, text="Save file", command=self.save_video
         )
-        self.tk_printout = tkst.ScrolledText(self.tk_canvas, wrap=tk.WORD)
+        self.tk_printout = tkst.ScrolledText(
+            self.tk_canvas, wrap=tk.WORD, font=("*", 12)
+        )
         self.filetypes_load = (("avi", ".avi"), ("mp4", ".mp4"), ("tiff", ".tif .tiff"))
         self.filetypes_save = (("tiff", ".tif .tiff"), ("avi", ".avi"))
         self.filename = ""
