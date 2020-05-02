@@ -12,7 +12,6 @@ how to make executables with pyinstaller
 on Mac: pyinstaller
 --onefile
 --windowed
---icon=icons/mac.png
 --add-binary='/System/Library/Frameworks/Tk.framework/Tk':'tk'
 --add-binary='/System/Library/Frameworks/Tcl.framework/Tcl':'tcl'
 gui.py
