@@ -6,12 +6,14 @@ There are some very sophisticated data analysis tools available for Neuroscience
 
 ## Installation
 ### Windows
+1. Click on datamanipulator.exe
+2. Click on the download button on the right side and save datamanipulator.exe on your computer
+3. Open datamanipulator.exe
 
-
+You should get a warning that datamanipulator.exe is 
 ### Linux/MacOS
 ```sh
 pip install pipenv
-
 cd code/
 pipenv install
 ```
@@ -24,7 +26,7 @@ If people like your project they’ll want to learn how they can use it. To do s
 - Can save as: .tif/.tiff
 
 ## Python packages used
-- GUI: tkinter
+- GUI programming: tkinter
 - Video/image manipulation: mainly cv2 and PIL. 
 - Check the Pipfile for all used packages! 
 
