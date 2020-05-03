@@ -1,27 +1,35 @@
 # DataManipulator
-An easy to use GUI program to convert and work with video data. 
+An easy to use python GUI program to convert and manipulate video data. 
 
 ## Motivation
-There a lot of 
+There are some very sophisticated data analysis tools available for Neuroscience. Unfortunately, installation and usage often requires the command line. This tool provides a window with buttons, so you can easily load, save and convert your video data! 
 
 ## Installation
-Provide step by step series of examples and explanations about how to get a development env running.
+### Windows
 
+
+### Linux/MacOS
+```sh
+pip install pipenv
+
+cd code/
+pipenv install
+```
 ## How to use?
 If people like your project they’ll want to learn how they can use it. To do so include step by step guide to use your project.
-
-
 
 
 ## Supported video formats
 - Can load: .avi
 - Can save as: .tif/.tiff
 
-## Tech used
-GUI built with tkinter. Image/video manipulation mainly done with opencv and pillow. Check the Pipfile for all used packages! 
+## Python packages used
+- GUI: tkinter
+- Video/image manipulation: mainly cv2 and PIL. 
+- Check the Pipfile for all used packages! 
 
 ## Tests
-- to be implemented
+to be implemented
 
 ## License
 MIT
