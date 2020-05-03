@@ -5,14 +5,14 @@ An easy to use python GUI program to convert and manipulate video data.
 There are some very sophisticated data analysis tools available for Neuroscience. Unfortunately, installation and usage often requires using the command line. This tool provides a simple window with buttons, so you can easily load, save and convert your video data! 
 
 ## Installation
-### Windows
+### **Windows**
 1. Click on datamanipulator.exe
 2. Click on the download button on the right side and save datamanipulator.exe on your computer
 3. Open datamanipulator.exe
 
 You should get a warning that datamanipulator.exe is from the Internet by an unknown developer and potentially a security risk. Click "more information" to be able to run the program.
 
-### Linux
+### **Linux**
 If you are comfortable with the command line you can also run this program on Linux (and Windows) from there. \
 
 Make sure you have python installed:
@@ -58,4 +58,4 @@ to run the GUI.
 to be implemented
 
 ## License
-MIT
+MIT © [Maximilian Rutz](https://github.com/maxtue)
