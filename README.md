@@ -33,12 +33,17 @@ A virtual environment acts like a container within your system. Different virtua
 ```sh
 pipenv shell
 ```
-Now we should have all packages installed and can call 
+Now we can finally call 
+```sh
+python datamanipulator.py
+```
+to run the GUI. 
 
 
 ## How to use?
-If people like your project they’ll want to learn how they can use it. To do so include step by step guide to use your project.
-
+1. Load file
+2. Manipulate active file
+3. Save active file
 
 ## Supported video formats
 - Can load: .avi
