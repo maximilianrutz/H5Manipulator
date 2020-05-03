@@ -17,7 +17,7 @@ on Mac: pyinstaller
 gui.py
 
 on Windows:
-pyinstaller --onefile --icon=dependencies\windows\windows_icon.ico gui.py
+pyinstaller --onefile --windowed --icon=dependencies\windows_icon.ico gui.py
 """
 import os
 
@@ -36,7 +36,7 @@ class DataManipulator:
 
     def __init__(self):
         gui_height = 300
-        gui_width = 400
+        gui_width = 450
         self.filetypes_load = [("avi", ".avi")]
         self.filetypes_save = [("tiff", ".tif .tiff")]
         self.filepath = ""

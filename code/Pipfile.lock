@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "cdcc0c1536a7c694237294d7b9c77164bdd4e1bdecb89d07df9015f42cf6332c"
+            "sha256": "67ede65c94e6b1ee44e20e77d26eaa20ed4c277455f2e6b725c953d2ad922707"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,20 +16,6 @@
         ]
     },
     "default": {
-        "altgraph": {
-            "hashes": [
-                "sha256:1f05a47122542f97028caf78775a095fbe6a2699b5089de8477eb583167d69aa",
-                "sha256:c623e5f3408ca61d4016f23a681b9adb100802ca3e3da5e718915a9e4052cebe"
-            ],
-            "version": "==0.17"
-        },
-        "macholib": {
-            "hashes": [
-                "sha256:0c436bc847e7b1d9bda0560351bf76d7caf930fb585a828d13608839ef42c432",
-                "sha256:c500f02867515e6c60a27875b408920d18332ddf96b4035ef03beddd782d4281"
-            ],
-            "version": "==1.14"
-        },
         "numpy": {
             "hashes": [
                 "sha256:0aa2b318cf81eb1693fcfcbb8007e95e231d7e1aa24288137f3b19905736c3ee",
@@ -112,11 +98,7 @@
             "version": "==7.1.2"
         },
         "pyinstaller": {
-            "hashes": [
-                "sha256:3730fa80d088f8bb7084d32480eb87cbb4ddb64123363763cf8f2a1378c1c4b7"
-            ],
-            "index": "pypi",
-            "version": "==3.6"
+            "file": "https://github.com/pyinstaller/pyinstaller/archive/develop.zip"
         }
     },
     "develop": {
@@ -155,6 +137,14 @@
                 "sha256:dacca89f4bfadd5de3d7489b7c8a566eee0d3676333fbb50030263894c38c0dc"
             ],
             "version": "==7.1.2"
+        },
+        "colorama": {
+            "hashes": [
+                "sha256:7d73d2a99753107a36ac6b455ee49046802e59d9d076ef8e47b61499fa29afff",
+                "sha256:e96da0d330793e2cb9485e9ddfd918d456036c7149416295932478192f4436a1"
+            ],
+            "markers": "sys_platform == 'win32'",
+            "version": "==0.4.3"
         },
         "isort": {
             "hashes": [
@@ -275,7 +265,6 @@
                 "sha256:fc0fea399acb12edbf8a628ba8d2312f583bdbdb3335635db062fa98cf71fca4",
                 "sha256:fe460b922ec15dd205595c9b5b99e2f056fd98ae8f9f56b888e7a17dc2b757e7"
             ],
-            "markers": "implementation_name == 'cpython' and python_version < '3.8'",
             "version": "==1.4.1"
         },
         "wrapt": {
