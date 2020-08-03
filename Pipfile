@@ -1,0 +1,21 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pylint = "*"
+black = "==19.10b0"
+
+[packages]
+opencv-python = "*"
+pillow = "*"
+numpy = "*"
+pyinstaller = {file = "https://github.com/pyinstaller/pyinstaller/archive/develop.zip"}
+h5py = "*"
+
+[requires]
+python_version = "*"
+
+[pipenv]
+allow_prereleases = false
