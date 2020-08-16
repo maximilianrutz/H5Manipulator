@@ -8,7 +8,7 @@ Some Femtonics microscopes output data into .mesc files after some initial data 
 
 ## Installation
 First, download this github repository:
-1. Click on the green "Clone or Download" Button
+1. Click on the green "Code" Button
 2. Click on "Download Zip"
 3. Unpack the zip file locally
 
