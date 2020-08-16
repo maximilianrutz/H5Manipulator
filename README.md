@@ -1,61 +1,48 @@
-# DataManipulator
-An easy to use python GUI program to convert and manipulate video data at the Institute for Neurophysiology at the University of Tuebingen. 
+# MescConverter
+A python script with a GUI to read calcium imaging data from Femtonics microscopes .mesc files and save to .h5 files.
+
 
 ## Motivation
-There are some very sophisticated data analysis tools available for Neuroscience. Unfortunately, installation and usage often requires using the command line. This tool provides a simple window with buttons, so you can easily load, save and convert your video data! 
+Some Femtonics microscopes output data into .mesc files after some initial data manipulation. To reverse engineer the initial manipulations someone kind in the community wrote the Matlab script "readMEScTStack.m". This python script applies the same transformations and (in the future) additionally implements a motion correction algorithm from the popular 2-photon imaging framework suite2p. 
+
 
 ## Installation
-### Windows
+First, download this github repository:
 1. Click on the green "Clone or Download" Button
 2. Click on "Download Zip"
-3. Open/extract the zip file and run datamanipulator.exe
+3. Unpack the zip file locally
 
-You should get a warning that datamanipulator.exe is from the Internet by an unknown developer and potentially a security risk. Click "more information" to be able to run the program.
-  
-  
-### Linux
-If you are comfortable with the command line you can also run this program on Linux from there.  
+### Python dependencies
+Open a Powershell on Windows or a Terminal on Linux and type the following commands.
 
-Make sure you have python installed:
-```sh
-sudo apt update
-sudo apt install python
-```
-Pipenv is used to install the necessary python packages. It is itself just a package that you can install with the python package manager pip:
+Install pipenv which will take care of installing all necessary python packages:
 ```sh
 pip install pipenv
 ```
-Pipenv keeps the information about which packages need to be installed in two files named "Pipfile" and "Pipfile.lock". Move to the directory in which these files are stored and tell Pipenv to install a virtual environment:
+
+Move to the directory in which Pipfile and Pipfile.lock are placed and install the packages:
 ```sh
-cd code/
+cd MescConverter/
 pipenv install
 ```
-A virtual environment acts as a container in your system. Different virtual environments can have different packages installed. Pipenv  allows you to easily change the environment when you work on a different project with other dependencies. In order to activate the environment call
+Pipenv creates a virtual environment into which the packages specified in the Pipfile are installed. A virtual environment acts as a container in your system. Different virtual environments can have different packages installed. This allows you to easily change the environment when you work on another project with other dependencies. 
+
+
+## How to use?
+Go to the directory in which you installed the pipenv environment. Activate the environment with
 ```sh
 pipenv shell
 ```
-Now you can finally run 
+Now you can run 
 ```sh
-python datamanipulator.py
+python3 converter.py
 ```
 to start the GUI. 
 
-## How to use?
-1. Load file
-2. Manipulate active file
-3. Save active file
-
-## Supported video formats
-- Can load: .avi
-- Can save as: .tif/.tiff
-
-## Python packages used
-- GUI programming: tkinter
-- Video/image manipulation: mainly cv2 and PIL. 
-- Check the Pipfile for all used packages! 
 
 ## Tests
-to be implemented
+Unit tests are written with pytest. Some of them rely upon a specific testfile.mesc which has been used for development. If you want to run the tests with another testfile.mesc you will need to adjust some of the asserted values. 
+
 
 ## Credits
-Supported by and developed together with the [Institute for Neurophysiology](http://www.physiologie2.uni-tuebingen.de/) at the University of Tuebingen. 
+Written at the [Institute for Neurophysiology](http://www.physiologie2.uni-tuebingen.de/) at the University of Tuebingen. 

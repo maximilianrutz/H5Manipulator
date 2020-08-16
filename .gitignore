@@ -1,7 +1,9 @@
 # Project specific
 .vscode/
 .DS_Store
-test*
+data/
+*.mesc
+*.h5
 
 
 # Byte-compiled / optimized / DLL files

@@ -5,17 +5,16 @@ verify_ssl = true
 
 [dev-packages]
 pylint = "*"
-black = "==19.10b0"
+black = "*"
+pytest = "*"
 
 [packages]
-opencv-python = "*"
-pillow = "*"
 numpy = "*"
-pyinstaller = {file = "https://github.com/pyinstaller/pyinstaller/archive/develop.zip"}
 h5py = "*"
+#suite2p = "0"
 
 [requires]
 python_version = "*"
 
 [pipenv]
-allow_prereleases = false
+allow_prereleases = true
