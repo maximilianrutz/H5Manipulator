@@ -3,7 +3,7 @@ A python script with a GUI to read calcium imaging data from Femtonics microscop
 
 
 ## Motivation
-Some Femtonics microscopes write data into .mesc files after some initial data manipulation. To reverse engineer the initial manipulations someone kind in the community wrote the Matlab script "readMEScTStack.m". This python script applies the same transformations and (in the future) additionally implements a motion correction algorithm from the popular 2-photon imaging framework suite2p. 
+Some Femtonics microscopes write data into .mesc files after some initial data manipulation. To reverse engineer the initial manipulations someone kind in the community wrote the Matlab script "readMEScTStack.m". This GUI performs the same transformations and saves the result to an .h5 file.
 
 
 ## Installation
