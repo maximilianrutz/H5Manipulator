@@ -25,7 +25,7 @@ pip install pipenv
 
 Move to the directory in which Pipfile and Pipfile.lock are placed and install the packages:
 ```sh
-cd MescConverter/
+cd MescConverter
 pipenv install
 ```
 Pipenv creates a virtual environment into which the packages specified in the Pipfile are installed. A virtual environment acts as a container in your system. Different virtual environments can have different packages installed. This allows you to easily change the environment when you work on another project with other dependencies. 
