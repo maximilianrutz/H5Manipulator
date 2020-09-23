@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Convert .mesc files to .h5 and apply suite2p motion correction"""
+"""Select datasets from .mesc files, reverse offset and linear scaling and save as .h5"""
 
 import time
 from pathlib import Path
@@ -17,6 +17,10 @@ class Data:
         self.loadpath = kwargs["loadpath"] if "loadpath" in kwargs else None
         self.savepath = kwargs["savepath"] if "savepath" in kwargs else None
 
+    ##########
+    # Data handling
+    ##########
+
     def load_h5keys(self):
         with h5py.File(self.loadpath, "r") as f:
             h5tree = []
@@ -26,39 +30,32 @@ class Data:
             ]
 
     def load_dataset(self):
-        with h5py.File(self.loadpath, "r") as f:  # , driver="mpio"
+        with h5py.File(self.loadpath, "r") as f:
             self.dataset = f[self.h5key][()]
 
     def get_linear_offset(self):
-        group = str(Path(self.h5key).parent)
-        dataset = str(Path(self.h5key).name)
+        group = "/".join(self.h5key.split("/")[0:-1])
+        dataset = self.h5key.split("/")[-1]
         attribute = f"{dataset}_Conversion_ConversionLinearOffset"
         with h5py.File(self.loadpath, "r") as f:
             self.linear_offset = f[group].attrs[attribute]
 
     def get_linear_scale(self):
-        group = str(Path(self.h5key).parent)
-        dataset = str(Path(self.h5key).name)
+        group = "/".join(self.h5key.split("/")[0:-1])
+        dataset = self.h5key.split("/")[-1]
         attribute = f"{dataset}_Conversion_ConversionLinearScale"
         with h5py.File(self.loadpath, "r") as f:
             self.linear_scale = f[group].attrs[attribute]
 
-    def linear_conversion(self):
+    def linear_correction(self):
         self.get_linear_offset()
         self.get_linear_scale()
-        self.dataset = self.linear_offset + self.linear_scale * self.dataset
-        self.dataset = self.dataset.astype("int16")
+        self.dataset_corr = self.linear_offset + self.linear_scale * self.dataset
+        self.dataset_corr = self.dataset_corr.astype("int16")
 
-    def save_dataset(self):
+    def save_dataset(self, dataset):
         with h5py.File(self.savepath, "w") as f:
-            f.create_dataset(self.h5key, data=self.dataset)
-
-    # https://suite2p.readthedocs.io/en/latest/registration.html
-    def suite2p_set_parameters(self):
-        pass
-
-    def suite2p_motion_correction(self):
-        pass
+            f.create_dataset(self.h5key, data=dataset)
 
 
 class Gui:
@@ -70,7 +67,10 @@ class Gui:
         self.add_dataset_label()
         self.root.mainloop()
 
+    ##########
     # Gui layout
+    ##########
+
     def add_root(self):
         self.root = Tk()
         self.root.title("Mesc Converter")
@@ -82,9 +82,7 @@ class Gui:
         filemenu = Menu(menubar, tearoff=0)
         filemenu.add_command(label="Open", command=self.open_mesc)
         filemenu.add_command(label="Save", command=self.save_dataset_gui)
-        filemenu.add_command(
-            label="Motion correct and save", command=self.mcorr_save_dataset
-        )
+        filemenu.add_command(label="Corr + Save", command=self.save_dataset_corr_gui)
         menubar.add_cascade(label="File", menu=filemenu)
         self.root.config(menu=menubar)
 
@@ -101,7 +99,10 @@ class Gui:
         self.dataset_la = Label(self.root, text="No dataset loaded")
         self.dataset_la.pack(side="bottom", fill=X, expand=True)
 
+    ##########
     # Gui functions
+    ##########
+
     def open_mesc(self):
         self.data.loadpath = askopenfilename(parent=self.root, initialdir="data")
         self.data.load_h5keys()
@@ -112,8 +113,9 @@ class Gui:
         self.add_h5keys_dropdown()
 
     def select_h5key(self, menu_selection):
-        self.data.h5key = menu_selection
-        self.load_dataset_gui()
+        if not self.data.h5keys == ["Open file to select h5 keys"]:
+            self.data.h5key = menu_selection
+            self.load_dataset_gui()
 
     def load_dataset_gui(self):
         self.dataset_la.config(text="Loading dataset...")
@@ -123,23 +125,26 @@ class Gui:
         exec_time = time.time() - time_start
         self.dataset_la.config(text=f"Dataset loaded in {exec_time:.2f} s")
 
+    def save_dataset_execution(self, dataset):
+        self.dataset_la.config(text="Saving dataset...")
+        self.dataset_la.update()
+        time_start = time.time()
+        self.data.save_dataset(dataset)
+        exec_time = time.time() - time_start
+        self.dataset_la.config(text=f"Dataset saved in {exec_time:.2f} s")
+
     def save_dataset_gui(self):
         self.data.savepath = asksaveasfilename(
             parent=self.root, initialfile=self.data.h5key.replace("/", "-") + ".h5"
         )
-        self.dataset_la.config(text="Saving dataset...")
-        self.dataset_la.update()
-        time_start = time.time()
-        self.data.save_dataset()
-        exec_time = time.time() - time_start
-        self.dataset_la.config(text=f"Dataset saved in {exec_time:.2f} s")
+        self.save_dataset_execution(self.data.dataset)
 
-    def mcorr_save_dataset(self):
-        self.savepath = asksaveasfilename(
-            parent=self.root,
-            initialfile=self.data.h5key.replace("/", "-") + "-mcorr.h5",
+    def save_dataset_corr_gui(self):
+        self.data.linear_correction()
+        self.data.savepath = asksaveasfilename(
+            parent=self.root, initialfile=self.data.h5key.replace("/", "-") + "-corr.h5"
         )
-        self.data.save_dataset()
+        self.save_dataset_execution(self.data.dataset_corr)
 
 
 if __name__ == "__main__":

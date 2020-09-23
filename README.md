@@ -13,7 +13,7 @@ First, download this github repository:
 3. Unpack the zip file locally
 
 ### Python
-If not installed already you can download the latest version here: https://www.python.org/downloads/
+If it is not installed on your system already you can download the latest version here: https://www.python.org/downloads/
 
 ### Python dependencies
 Open a Powershell on Windows or a Shell on Linux and type the following commands.

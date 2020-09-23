@@ -38,8 +38,8 @@ def test_h5keys_are_strings(fixture_load_h5keys):
 
 def test_select_h5key(fixture_load_h5keys):
     data = fixture_load_h5keys
-    data.h5key = data.h5keys[2]
-    assert data.h5key == "MSession_0/MUnit_2/Channel_0"
+    data.h5key = data.h5keys[0]
+    assert data.h5key == "MSession_0/MUnit_3/Channel_0"
 
 
 @pytest.fixture
@@ -70,7 +70,7 @@ def test_dataset_is_array(fixture_load_dataset):
 
 def test_dataset_correct_value(fixture_load_dataset):
     data = fixture_load_dataset
-    assert data.dataset[0, 0, 0] == np.uint16(896)
+    assert data.dataset[0, 0, 0] == np.uint16(64512)
 
 
 # get and remove offset and linear conversion
