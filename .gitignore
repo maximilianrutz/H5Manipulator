@@ -1,8 +1,8 @@
 # Project specific
 .vscode/
 .DS_Store
-data/
 *.mesc
+!testfile.mesc
 *.h5
 
 

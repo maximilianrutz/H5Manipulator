@@ -11,7 +11,6 @@ pytest = "*"
 [packages]
 numpy = "*"
 h5py = "*"
-#suite2p = "0"
 
 [requires]
 python_version = "*"

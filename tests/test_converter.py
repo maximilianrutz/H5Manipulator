@@ -9,7 +9,7 @@ import converter
 
 
 # path to mesc testfile
-loadpath = os.path.join(os.path.dirname(__file__), "../data/testfile.mesc")
+loadpath = os.path.join(os.path.dirname(__file__), "../tests/testfile.mesc")
 
 
 def test_load_h5keys():
