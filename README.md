@@ -31,7 +31,7 @@ pipenv install
 Pipenv creates a virtual environment into which the packages specified in the Pipfile are installed. A virtual environment acts as a container in your system. Different virtual environments can have different packages installed. This allows you to easily change the environment when you work on another project with other dependencies. 
 
 
-## How to use?
+## Usage
 Go to the directory in which you installed the pipenv environment and activate it
 ```sh
 cd MescConverter
@@ -45,7 +45,7 @@ to start the GUI.
 
 
 ## Tests
-Unit tests are written with pytest. The use the file testfile.mesc in the tests directory. Activate the pipenv environment
+Unit tests are written with pytest. They use the file testfile.mesc in the tests directory. Activate the pipenv environment
 ```sh
 cd MescConverter
 pipenv shell
@@ -54,7 +54,7 @@ and call
 ```sh
 pytest
 ```
-to run the tests in tests/test_converter.py
+to run the tests in tests/test_converter.py.
 
 ## Credits
 Written at the [Institute for Neurophysiology](http://www.physiologie2.uni-tuebingen.de/) at the University of Tuebingen. 
