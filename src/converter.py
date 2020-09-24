@@ -27,9 +27,7 @@ class Data:
         with h5py.File(self.loadpath, "r") as f:
             h5tree = []
             f.visit(h5tree.append)
-            self.h5keys = [
-                h5key for h5key in h5tree if isinstance(f[h5key], h5py.Dataset)
-            ]
+            self.h5keys = [h5key for h5key in h5tree if isinstance(f[h5key], h5py.Dataset)]
 
     def load_dataset(self):
         """Load dataset for given h5key from selected .mesc file"""
@@ -101,12 +99,7 @@ class Gui:
         self.h5key = self.data.h5keys[0] if not self.data.h5key else self.data.h5key
         self.h5key_entry = StringVar(self.root)
         self.h5key_entry.set(self.h5key)
-        self.h5keys_dd = OptionMenu(
-            self.root,
-            self.h5key_entry,
-            *self.data.h5keys,
-            command=self.load_dataset_gui,
-        )
+        self.h5keys_dd = OptionMenu(self.root, self.h5key_entry, *self.data.h5keys, command=self.load_dataset_gui,)
         self.h5keys_dd.pack(side="top", fill=X, expand=True)
 
     def add_dataset_label(self):
@@ -146,10 +139,9 @@ class Gui:
 
     def save_dataset_gui(self):
         """Save dataset of data object"""
-        self.data.savepath = asksaveasfilename(
-            parent=self.root, initialfile=self.data.h5key.replace("/", "-") + ".h5"
-        )
-        self.save_dataset_info(self.data.dataset)
+        self.data.savepath = asksaveasfilename(parent=self.root, initialfile=self.data.h5key.replace("/", "-") + ".h5")
+        if self.data.savepath:
+            self.save_dataset_info(self.data.dataset)
 
     def save_dataset_corr_gui(self):
         """Correct dataset of data object and save"""
@@ -157,7 +149,8 @@ class Gui:
         self.data.savepath = asksaveasfilename(
             parent=self.root, initialfile=self.data.h5key.replace("/", "-") + "-corr.h5"
         )
-        self.save_dataset_info(self.data.dataset_corr)
+        if self.data.savepath:
+            self.save_dataset_info(self.data.dataset_corr)
 
     def save_dataset_info(self, dataset):
         """Show information while saving dataset"""
