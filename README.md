@@ -37,8 +37,9 @@ Go to the directory in which you installed the pipenv environment and activate i
 cd MescConverter
 pipenv shell
 ```
-Now you can run 
+Now go to the src directory and call the script 
 ```sh
+cd src
 python3 converter.py
 ```
 to start the GUI. 
