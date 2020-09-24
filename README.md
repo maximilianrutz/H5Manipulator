@@ -32,8 +32,9 @@ Pipenv creates a virtual environment into which the packages specified in the Pi
 
 
 ## How to use?
-Go to the directory in which you installed the pipenv environment. Activate the environment with
+Go to the directory in which you installed the pipenv environment and activate it
 ```sh
+cd MescConverter
 pipenv shell
 ```
 Now you can run 
@@ -44,8 +45,16 @@ to start the GUI.
 
 
 ## Tests
-Unit tests are written with pytest. Some of them rely upon a specific testfile.mesc which has been used for development. If you want to run the tests with another testfile.mesc you will need to adjust some of the asserted values. 
-
+Unit tests are written with pytest. The use the file testfile.mesc in the tests directory. Activate the pipenv environment
+```sh
+cd MescConverter
+pipenv shell
+```
+and call 
+```sh
+pytest
+```
+to run the tests in tests/test_converter.py
 
 ## Credits
 Written at the [Institute for Neurophysiology](http://www.physiologie2.uni-tuebingen.de/) at the University of Tuebingen. 
