@@ -1,9 +1,9 @@
 # MescConverter
-A python script with a GUI to read calcium imaging data from Femtonics microscopes .mesc files and save to .h5 files.
+A python script with a GUI to read calcium imaging data from .mesc files and save to .h5 files.
 
 
 ## Motivation
-Some Femtonics microscopes write data into .mesc files after some initial data manipulation. To reverse engineer the initial manipulations someone kind in the community wrote the Matlab script "readMEScTStack.m". This GUI performs the same transformations and saves the result to an .h5 file.
+Some microscopes write data into .mesc files after applying a linear transformation. This GUI performs the reverse transformation and saves the result to an .h5 file.
 
 
 ## Installation
