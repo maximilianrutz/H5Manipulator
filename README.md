@@ -25,7 +25,7 @@ pip install pipenv
 
 Move to the directory in which Pipfile and Pipfile.lock are placed and install the packages:
 ```sh
-cd MescConverter
+cd MescConverter-master
 pipenv install
 ```
 Pipenv creates a virtual environment into which the packages specified in the Pipfile are installed. A virtual environment acts as a container in your system. Different virtual environments can have different packages installed. This allows you to easily change the environment when you work on another project with other dependencies. 
@@ -34,13 +34,13 @@ Pipenv creates a virtual environment into which the packages specified in the Pi
 ## Usage
 Go to the directory in which you installed the pipenv environment and activate it
 ```sh
-cd MescConverter
+cd MescConverter-master
 pipenv shell
 ```
 Now go to the src directory and call the script 
 ```sh
 cd src
-python3 converter.py
+python converter.py
 ```
 to start the GUI. 
 
@@ -48,7 +48,7 @@ to start the GUI.
 ## Tests
 Unit tests are written with pytest. They use the file testfile.mesc in the tests directory. Activate the pipenv environment
 ```sh
-cd MescConverter
+cd MescConverter-master
 pipenv shell
 ```
 and call 
