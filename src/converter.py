@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-"""Select datasets from .mesc files, reverse offset and linear scaling and save as .h5"""
+"""Select datasets from .h5 files, reverse offset and linear scaling and save as .h5"""
 
 import time
 from pathlib import Path
 from tkinter import *
-from tkinter.filedialog import askopenfilename, asksaveasfilename
+from tkinter.filedialog import askopenfilename, asksaveasfilename, askdirectory
 
 import h5py
 
@@ -13,7 +13,7 @@ import h5py
 class Data:
     def __init__(self, **kwargs):
         """Initialize an object which stores the data"""
-        self.h5keys = ["Open file to select h5 keys"]
+        self.h5keys = ["Open file to select h5 dataset(s)"]
         self.h5key = ""
         self.loadpath = kwargs["loadpath"] if "loadpath" in kwargs else None
         self.savepath = kwargs["savepath"] if "savepath" in kwargs else None
@@ -23,14 +23,16 @@ class Data:
     ##########
 
     def load_h5keys(self):
-        """Extract h5keys of all datasets in a .mesc file"""
+        """Extract h5keys of all datasets in a .h5 file"""
         with h5py.File(self.loadpath, "r") as f:
             h5tree = []
             f.visit(h5tree.append)
-            self.h5keys = [h5key for h5key in h5tree if isinstance(f[h5key], h5py.Dataset)]
+            self.h5keys = [
+                h5key for h5key in h5tree if isinstance(f[h5key], h5py.Dataset)
+            ]
 
     def load_dataset(self):
-        """Load dataset for given h5key from selected .mesc file"""
+        """Load dataset for given h5key from selected .h5 file"""
         with h5py.File(self.loadpath, "r") as f:
             self.dataset = f[self.h5key][()]
 
@@ -41,7 +43,6 @@ class Data:
         attribute = f"{dataset}_Conversion_ConversionLinearOffset"
         with h5py.File(self.loadpath, "r") as f:
             self.linear_offset = f[group].attrs[attribute]
-        print(self.linear_offset)
 
     def get_linear_scale(self):
         """Read linear scale factor which is stored as attribute in parent group of dataset"""
@@ -52,7 +53,7 @@ class Data:
             self.linear_scale = f[group].attrs[attribute]
 
     def linear_correction(self):
-        """Use linear offset and linear scale factor to reverse the conversion of .mesc files from Femtonics"""
+        """Use linear offset and linear scale factor to reverse a linear transformation"""
         self.get_linear_offset()
         self.get_linear_scale()
         self.dataset_corr = self.linear_offset + self.linear_scale * self.dataset
@@ -80,26 +81,36 @@ class Gui:
     def add_root(self):
         """Set up the Tkinter window"""
         self.root = Tk()
-        self.root.title("Mesc Converter")
+        self.root.title("H5 Manipulator")
         self.root.geometry("350x50")
         self.root.resizable(width=False, height=False)
+        self.selected_h5keys = []
 
     def add_menu(self):
         """Add menubar with options for file manipulation"""
         menubar = Menu(self.root)
         filemenu = Menu(menubar, tearoff=0)
-        filemenu.add_command(label="Open", command=self.open_mesc)
-        filemenu.add_command(label="Save", command=self.save_dataset_gui)
-        filemenu.add_command(label="Corr + Save", command=self.save_dataset_corr_gui)
+        filemenu.add_command(label="Open", command=self.open_h5)
+        filemenu.add_command(label="Save", command=self.save_check_selection)
+        filemenu.add_command(
+            label="Corr + Save", command=self.corr_save_check_selection
+        )
         menubar.add_cascade(label="File", menu=filemenu)
         self.root.config(menu=menubar)
 
     def add_h5keys_dropdown(self):
         """Add dropdown button for selection of h5key from a dataset"""
-        self.h5key = self.data.h5keys[0] if not self.data.h5key else self.data.h5key
         self.h5key_entry = StringVar(self.root)
-        self.h5key_entry.set(self.h5key)
-        self.h5keys_dd = OptionMenu(self.root, self.h5key_entry, *self.data.h5keys, command=self.load_dataset_gui,)
+        self.h5key_entry.set("Select h5 dataset(s)")
+        self.h5keys_dd = OptionMenu(
+            self.root,
+            self.h5key_entry,
+            *self.data.h5keys,
+            command=self.select_h5key,
+        )
+        for h5key in self.selected_h5keys:
+            index = self.data.h5keys.index(h5key)
+            self.h5keys_dd["menu"].entryconfig(index, background="lightgrey")
         self.h5keys_dd.pack(side="top", fill=X, expand=True)
 
     def add_dataset_label(self):
@@ -111,55 +122,104 @@ class Gui:
     # Gui functions
     ##########
 
-    def open_mesc(self):
-        """Ask for filepath and load all h5keys from that .mesc file"""
+    def open_h5(self):
+        """Ask for filepath and load all h5keys from that .h5 file"""
         self.data.loadpath = askopenfilename(parent=self.root, initialdir="data")
         self.data.load_h5keys()
+        self.selected_h5keys = []
+        self.update_h5keys_dd()
+
+    def select_h5key(self, menu_selection):
+        """Add or remove input from OptionMenu to list of selected keys"""
+        if menu_selection not in self.selected_h5keys:
+            self.selected_h5keys.append(menu_selection)
+        else:
+            self.selected_h5keys.remove(menu_selection)
         self.update_h5keys_dd()
 
     def update_h5keys_dd(self):
-        """Update dropdown button h5keys to h5keys from currently opened .mesc file"""
+        """Update dropdown button h5keys to h5keys from currently opened .h5 file"""
         self.h5keys_dd.destroy()
         self.add_h5keys_dropdown()
 
-    def load_dataset_gui(self, menu_selection):
-        """Load dataset of selected h5key if a .mesc has been opened"""
-        if not self.data.h5keys == ["Open file to select h5 keys"]:
-            self.data.h5key = menu_selection
+    def save_check_selection(self):
+        "Check if a single file or multiple datasets were selected, load and save"
+        if len(self.selected_h5keys) == 1:
+            self.data.h5key = self.selected_h5keys[0]
+            self.save_dataset_gui()
+        elif len(self.selected_h5keys) > 1:
+            self.save_multiple_datasets()
+
+    def corr_save_check_selection(self):
+        "Check if a single file or multiple datasets were selected, load, correct and save"
+        if len(self.selected_h5keys) == 1:
+            self.data.h5key = self.selected_h5keys[0]
             self.load_dataset_info()
+            self.corr_save_dataset_gui()
+        elif len(self.selected_h5keys) > 1:
+            self.corr_save_multiple_datasets()
 
     def load_dataset_info(self):
         """Show information while loading dataset"""
-        self.dataset_la.config(text="Loading dataset...")
+        self.dataset_la.config(text=f"Loading {self.data.h5key}...")
         self.dataset_la.update()
         time_start = time.time()
         self.data.load_dataset()
         exec_time = time.time() - time_start
         self.dataset_la.config(text=f"Dataset loaded in {exec_time:.2f} s")
 
-    def save_dataset_gui(self):
-        """Save dataset of data object"""
-        self.data.savepath = asksaveasfilename(parent=self.root, initialfile=self.data.h5key.replace("/", "-") + ".h5")
-        if self.data.savepath:
-            self.save_dataset_info(self.data.dataset)
-
-    def save_dataset_corr_gui(self):
-        """Correct dataset of data object and save"""
-        self.data.linear_correction()
-        self.data.savepath = asksaveasfilename(
-            parent=self.root, initialfile=self.data.h5key.replace("/", "-") + "-corr.h5"
-        )
-        if self.data.savepath:
-            self.save_dataset_info(self.data.dataset_corr)
-
     def save_dataset_info(self, dataset):
         """Show information while saving dataset"""
-        self.dataset_la.config(text="Saving dataset...")
+        self.dataset_la.config(text=f"Saving {self.data.h5key}...")
         self.dataset_la.update()
         time_start = time.time()
         self.data.save_dataset(dataset)
         exec_time = time.time() - time_start
         self.dataset_la.config(text=f"Dataset saved in {exec_time:.2f} s")
+
+    def save_dataset_gui(self):
+        """Save single dataset with chosen name"""
+        self.data.savepath = asksaveasfilename(
+            parent=self.root, initialfile=self.data.h5key.replace("/", "-") + ".h5"
+        )
+        if self.data.savepath:
+            self.load_dataset_info()
+            self.save_dataset_info(self.data.dataset)
+
+    def corr_save_dataset_gui(self):
+        """Correct and save single dataset with chosen name"""
+        self.data.savepath = asksaveasfilename(
+            parent=self.root, initialfile=self.data.h5key.replace("/", "-") + "-corr.h5"
+        )
+        if self.data.savepath:
+            self.load_dataset_info()
+            self.data.linear_correction()
+            self.save_dataset_info(self.data.dataset_corr)
+
+    def save_multiple_datasets(self):
+        "Load and save multiple datasets sequentially"
+        save_directory = askdirectory()
+        if save_directory:
+            for h5key in self.selected_h5keys:
+                self.data.h5key = h5key
+                self.data.load_dataset()
+                self.data.savepath = Path(
+                    save_directory, h5key.replace("/", "-") + ".h5"
+                )
+                self.save_dataset_info(self.data.dataset)
+
+    def corr_save_multiple_datasets(self):
+        "Load, correct and save multiple datasets sequentially"
+        save_directory = askdirectory()
+        if save_directory:
+            for h5key in self.selected_h5keys:
+                self.data.h5key = h5key
+                self.data.load_dataset()
+                self.data.savepath = Path(
+                    save_directory, h5key.replace("/", "-") + "-corr.h5"
+                )
+                self.data.linear_correction()
+                self.save_dataset_info(self.data.dataset_corr)
 
 
 if __name__ == "__main__":
