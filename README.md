@@ -1,9 +1,9 @@
-# MescConverter
-A python script with a GUI to read calcium imaging data from .mesc files and save to .h5 files.
+# H5Manipulator
+A python script with a GUI to read, manipulate and save calcium imaging data to .h5 files from .h5 files with internal structures.
 
 
 ## Motivation
-Some microscopes write data into .mesc files after applying a linear transformation. This GUI performs the reverse transformation and saves the result to an .h5 file.
+Some microscopes apply linear transformations to data before saving. This GUI performs the reverse transformation and saves the result to an .h5 file.
 
 
 ## Installation
