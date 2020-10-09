@@ -35,7 +35,7 @@ class Data:
         """Load dataset for given h5key from selected .h5 file"""
         with h5py.File(self.loadpath, "r") as f:
             try:
-                self.dataset = f[self.h5key][:, :, 0]
+                self.dataset = f[self.h5key][0, :, :]
             except ValueError:
                 self.load_dataset_split()
             print(self.dataset.shape)
