@@ -38,7 +38,7 @@ class Data:
                 self.dataset = f[self.h5key][:, :, 0]
             except ValueError:
                 self.load_dataset_split()
-            print(self.dataset)
+            print(self.dataset.shape)
 
     def load_dataset_split(self):
         """Load dataset sequentially to avoid ValueError for large files"""
