@@ -34,7 +34,15 @@ class Data:
     def load_dataset(self):
         """Load dataset for given h5key from selected .h5 file"""
         with h5py.File(self.loadpath, "r") as f:
-            self.dataset = f[self.h5key][()]
+            try:
+                self.dataset = f[self.h5key][:, :, 0]
+            except ValueError:
+                self.load_dataset_split()
+            print(self.dataset)
+
+    def load_dataset_split(self):
+        """Load dataset sequentially to avoid ValueError for large files"""
+        print("Hi")
 
     def get_linear_offset(self):
         """Read linear offset which is stored as attribute in parent group of dataset"""
