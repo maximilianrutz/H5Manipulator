@@ -21,7 +21,7 @@ class Data:
         self.num_batches = 1
 
     ##########
-    # Data handling
+    # Data Loading
     ##########
 
     def load_h5keys(self):
@@ -33,12 +33,27 @@ class Data:
                 h5key for h5key in h5tree if isinstance(f[h5key], h5py.Dataset)
             ]
 
-    def load_dataset(self, batch=0):
+    def load_dataset_batch(self, batch=0):
         """Load batches of dataset for given h5key from .h5 file"""
         with h5py.File(self.loadpath, "r") as f:
             dataset_size = f[self.h5key].shape[0]
-            print(dataset_size)
-            # self.dataset = f[self.h5key][()]
+            batch_start = int(batch * dataset_size / self.num_batches)
+            batch_end = int((batch + 1) * dataset_size / self.num_batches)
+            self.dataset = f[self.h5key][batch_start:batch_end, :, :]
+
+    def find_num_batches(self):
+        """Find the minimal number of batches for which numpy ndarrays can hold the data"""
+        for num_batches in count(start=4):
+            try:
+                self.num_batches = num_batches
+                self.load_dataset_batch()
+                break
+            except ValueError:
+                pass
+
+    ##########
+    # Data Correction
+    ##########
 
     def get_linear_offset(self):
         """Read linear offset which is stored as attribute in parent group of dataset"""
@@ -62,9 +77,24 @@ class Data:
         self.get_linear_scale()
         self.dataset_corr = self.linear_offset + self.linear_scale * self.dataset
 
-    def save_dataset(self, dataset):
-        """Save given dataset and name it like selected h5key"""
-        with h5py.File(self.savepath, "w") as f:
+    ##########
+    # Data Saving
+    ##########
+
+    def full_savepath(self, dataset, corr, batch):
+        """Create full savepath depending on correction and batches"""
+        savepath = self.savepath
+        if corr:
+            savepath += "-corr"
+        if self.num_batches > 1:
+            savepath += f"_batch{batch}"
+        savepath += ".h5"
+        return savepath
+
+    def save_dataset(self, dataset, corr, batch):
+        """Save dataset with batch number if more than one batch"""
+        savepath = self.full_savepath(dataset, corr, batch)
+        with h5py.File(savepath, "w") as f:
             f.create_dataset(self.h5key, data=dataset)
 
 
@@ -89,14 +119,17 @@ class Gui:
         self.root.geometry("350x50")
         self.root.resizable(width=False, height=False)
         self.selected_h5keys = []
+        self.corr = False
 
     def add_menu(self):
         """Add menubar with options for file manipulation"""
         menubar = Menu(self.root)
         filemenu = Menu(menubar, tearoff=0)
         filemenu.add_command(label="Open", command=self.open_h5)
-        filemenu.add_command(label="Save", command=self.save_check_multiple)
-        filemenu.add_command(label="Corr + Save", command=self.save_check_multiple)
+        filemenu.add_command(label="Save", command=lambda: self.save_h5(corr=False))
+        filemenu.add_command(
+            label="Corr + Save", command=lambda: self.save_h5(corr=True)
+        )
         menubar.add_cascade(label="File", menu=filemenu)
         self.root.config(menu=menubar)
 
@@ -117,16 +150,16 @@ class Gui:
 
     def add_dataset_label(self):
         """Add label to show information when Loading/Saving a dataset"""
-        self.dataset_la = Label(self.root, text="No dataset loaded")
+        self.dataset_la = Label(self.root, text="No file opened")
         self.dataset_la.pack(side="bottom", fill=X, expand=True)
 
     ##########
-    # Gui functions
+    # Gui keypress functions
     ##########
 
     def open_h5(self):
         """Ask for filepath and load all h5keys from that .h5 file"""
-        self.data.loadpath = askopenfilename(parent=self.root, initialdir="data")
+        self.data.loadpath = askopenfilename(parent=self.root)
         self.data.load_h5keys()
         self.selected_h5keys = []
         self.update_h5keys_dd()
@@ -135,104 +168,104 @@ class Gui:
         """Add or remove input from OptionMenu to list of selected keys"""
         if menu_selection not in self.selected_h5keys:
             self.selected_h5keys.append(menu_selection)
+            self.dataset_la.config(text="Dataset selected")
         else:
             self.selected_h5keys.remove(menu_selection)
+            self.dataset_la.config(text="Dataset deselected")
         self.update_h5keys_dd()
 
+    def save_h5(self, corr):
+        """Handle and save selected datasets"""
+        self.corr = corr
+        self.check_number_of_datasets()
+
+    ##########
+    # Gui information label functions
+    ##########
+
     def update_h5keys_dd(self):
-        """Update dropdown button h5keys to h5keys from currently opened .h5 file"""
+        """Update dropdown button h5keys to h5keys from opened .h5 file"""
         self.h5keys_dd.destroy()
         self.add_h5keys_dropdown()
 
-    def save_check_multiple(self):
-        "Check if a single file or multiple datasets were selected, load and save"
+    def load_dataset_info(self, batch):
+        """Show information while loading dataset"""
+        self.dataset_la.config(text=f"Loading {self.data.h5key}")
+        self.dataset_la.update()
+        time_start = time.time()
+        self.data.load_dataset_batch(batch)
+        exec_time = time.time() - time_start
+        self.dataset_la.config(text=f"Dataset loaded in {exec_time:.2f} s")
+
+    def correct_dataset_info(self):
+        """Show information while correcting dataset"""
+        self.dataset_la.config(text=f"Correcting {self.data.h5key}")
+        self.dataset_la.update()
+        time_start = time.time()
+        self.data.linear_correction()
+        exec_time = time.time() - time_start
+        self.dataset_la.config(text=f"Dataset corrected in {exec_time:.2f} s")
+
+    def save_dataset_info(self, dataset, corr, batch):
+        """Show information while saving dataset"""
+        self.dataset_la.config(text=f"Saving {self.data.h5key}")
+        self.dataset_la.update()
+        time_start = time.time()
+        self.data.save_dataset(dataset, corr, batch)
+        exec_time = time.time() - time_start
+        self.dataset_la.config(text=f"Dataset saved in {exec_time:.2f} s")
+
+    ##########
+    # Gui after keypress decision tree functions
+    ##########
+
+    def check_number_of_datasets(self):
+        "Check if a single or multiple datasets were selected"
         if len(self.selected_h5keys) == 1:
             self.single_dataset()
         elif len(self.selected_h5keys) > 1:
             self.multiple_datasets()
+        else:
+            self.dataset_la.config(text=f"No dataset selected")
 
     def single_dataset(self):
+        """For a single dataset a full filename for saving can be chosen"""
         self.data.h5key = self.selected_h5keys[0]
         self.data.savepath = asksaveasfilename(
-            parent=self.root, initialfile=self.data.h5key.replace("/", "-") + ".h5"
+            parent=self.root, initialfile=self.data.h5key.replace("/", "-")
         )
         if self.data.savepath:
             self.handle_dataset()
 
     def multiple_datasets(self):
-        "Load and save multiple datasets sequentially"
+        """For multiple datasets only the directory for saving can be chosen"""
         save_directory = askdirectory()
         if save_directory:
             for h5key in self.selected_h5keys:
                 self.data.h5key = h5key
-                self.data.savepath = Path(
-                    save_directory, h5key.replace("/", "-") + ".h5"
-                )
+                self.data.savepath = Path(save_directory, h5key.replace("/", "-"))
                 self.handle_dataset()
 
+    ##########
+    # Gui handle dataset functions
+    ##########
+
     def handle_dataset(self):
-        self.find_num_batches()
-
-    def find_num_batches(self):
+        """Load, correct and save a single dataset and split it into batches if necessary"""
         self.dataset_la.config(text=f"Finding number of load batches...")
-        for num_batches in count(start=1):
-            try:
-                self.data.num_batches = num_batches
-                self.data.load_dataset()
-                break
-            except ValueError:
-                pass
+        self.data.find_num_batches()
+        self.handle_batches()
 
-    def load_corr_save_batches(self):
-        self.find_num_batches()
+    def handle_batches(self):
+        """Load, correct and save batches sequentially"""
         for batch in range(self.data.num_batches):
-            self.data.load_dataset(batch)
+            self.data.load_dataset_batch(batch)
+            if self.corr:
+                self.correct_dataset_info()
+                self.save_dataset_info(self.data.dataset_corr, self.corr, batch)
+            else:
+                self.save_dataset_info(self.data.dataset, self.corr, batch)
 
-    def load_dataset_info(self):
-        """Show information while loading dataset"""
-        self.dataset_la.config(text=f"Loading {self.data.h5key}...")
-        self.dataset_la.update()
-        time_start = time.time()
-        self.data.load_dataset()
-        exec_time = time.time() - time_start
-        self.dataset_la.config(text=f"Dataset loaded in {exec_time:.2f} s")
-
-    def save_dataset_info(self, dataset):
-        """Show information while saving dataset"""
-        self.dataset_la.config(text=f"Saving {self.data.h5key}...")
-        self.dataset_la.update()
-        time_start = time.time()
-        self.data.save_dataset(dataset)
-        exec_time = time.time() - time_start
-        self.dataset_la.config(text=f"Dataset saved in {exec_time:.2f} s")
-
-
-"""
-    def corr_save_dataset_gui(self):
-        "Correct and save single dataset with chosen name"
-        self.data.savepath = asksaveasfilename(
-            parent=self.root, initialfile=self.data.h5key.replace("/", "-") + "-corr.h5"
-        )
-        if self.data.savepath:
-            self.load_dataset_info()
-            self.data.linear_correction()
-            self.save_dataset_info(self.data.dataset_corr)
-"""
-
-
-"""    def corr_save_multiple_datasets(self):
-        "Load, correct and save multiple datasets sequentially"
-        save_directory = askdirectory()
-        if save_directory:
-            for h5key in self.selected_h5keys:
-                self.data.h5key = h5key
-                self.data.load_dataset()
-                self.data.savepath = Path(
-                    save_directory, h5key.replace("/", "-") + "-corr.h5"
-                )
-                self.data.linear_correction()
-                self.save_dataset_info(self.data.dataset_corr)
-"""
 
 if __name__ == "__main__":
     gui = Gui()
