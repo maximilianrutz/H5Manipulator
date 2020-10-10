@@ -4,6 +4,7 @@
 
 import time
 from pathlib import Path
+from itertools import count
 from tkinter import *
 from tkinter.filedialog import askopenfilename, asksaveasfilename, askdirectory
 
@@ -17,6 +18,7 @@ class Data:
         self.h5key = ""
         self.loadpath = kwargs["loadpath"] if "loadpath" in kwargs else None
         self.savepath = kwargs["savepath"] if "savepath" in kwargs else None
+        self.num_batches = 1
 
     ##########
     # Data handling
@@ -31,18 +33,12 @@ class Data:
                 h5key for h5key in h5tree if isinstance(f[h5key], h5py.Dataset)
             ]
 
-    def load_dataset(self):
-        """Load dataset for given h5key from selected .h5 file"""
+    def load_dataset(self, batch=0):
+        """Load batches of dataset for given h5key from .h5 file"""
         with h5py.File(self.loadpath, "r") as f:
-            try:
-                self.dataset = f[self.h5key][0, :, :]
-            except ValueError:
-                self.load_dataset_split()
-            print(self.dataset.shape)
-
-    def load_dataset_split(self):
-        """Load dataset sequentially to avoid ValueError for large files"""
-        print("Hi")
+            dataset_size = f[self.h5key].shape[0]
+            print(dataset_size)
+            # self.dataset = f[self.h5key][()]
 
     def get_linear_offset(self):
         """Read linear offset which is stored as attribute in parent group of dataset"""
@@ -99,10 +95,8 @@ class Gui:
         menubar = Menu(self.root)
         filemenu = Menu(menubar, tearoff=0)
         filemenu.add_command(label="Open", command=self.open_h5)
-        filemenu.add_command(label="Save", command=self.save_check_selection)
-        filemenu.add_command(
-            label="Corr + Save", command=self.corr_save_check_selection
-        )
+        filemenu.add_command(label="Save", command=self.save_check_multiple)
+        filemenu.add_command(label="Corr + Save", command=self.save_check_multiple)
         menubar.add_cascade(label="File", menu=filemenu)
         self.root.config(menu=menubar)
 
@@ -150,22 +144,49 @@ class Gui:
         self.h5keys_dd.destroy()
         self.add_h5keys_dropdown()
 
-    def save_check_selection(self):
+    def save_check_multiple(self):
         "Check if a single file or multiple datasets were selected, load and save"
         if len(self.selected_h5keys) == 1:
-            self.data.h5key = self.selected_h5keys[0]
-            self.save_dataset_gui()
+            self.single_dataset()
         elif len(self.selected_h5keys) > 1:
-            self.save_multiple_datasets()
+            self.multiple_datasets()
 
-    def corr_save_check_selection(self):
-        "Check if a single file or multiple datasets were selected, load, correct and save"
-        if len(self.selected_h5keys) == 1:
-            self.data.h5key = self.selected_h5keys[0]
-            self.load_dataset_info()
-            self.corr_save_dataset_gui()
-        elif len(self.selected_h5keys) > 1:
-            self.corr_save_multiple_datasets()
+    def single_dataset(self):
+        self.data.h5key = self.selected_h5keys[0]
+        self.data.savepath = asksaveasfilename(
+            parent=self.root, initialfile=self.data.h5key.replace("/", "-") + ".h5"
+        )
+        if self.data.savepath:
+            self.handle_dataset()
+
+    def multiple_datasets(self):
+        "Load and save multiple datasets sequentially"
+        save_directory = askdirectory()
+        if save_directory:
+            for h5key in self.selected_h5keys:
+                self.data.h5key = h5key
+                self.data.savepath = Path(
+                    save_directory, h5key.replace("/", "-") + ".h5"
+                )
+                self.handle_dataset()
+
+    def handle_dataset(self):
+        self.find_num_batches()
+
+    def find_num_batches(self):
+        self.dataset_la.config(text=f"Finding number of load batches...")
+        for num_batches in count(start=1):
+            try:
+                self.data.num_batches = num_batches
+                self.data.load_dataset()
+                break
+            except ValueError:
+                pass
+
+    def load_corr_save_batches(self):
+        self.find_num_batches()
+        for batch in range(self.data.num_batches):
+            self.data.load_dataset(batch)
 
     def load_dataset_info(self):
         """Show information while loading dataset"""
@@ -185,17 +206,10 @@ class Gui:
         exec_time = time.time() - time_start
         self.dataset_la.config(text=f"Dataset saved in {exec_time:.2f} s")
 
-    def save_dataset_gui(self):
-        """Save single dataset with chosen name"""
-        self.data.savepath = asksaveasfilename(
-            parent=self.root, initialfile=self.data.h5key.replace("/", "-") + ".h5"
-        )
-        if self.data.savepath:
-            self.load_dataset_info()
-            self.save_dataset_info(self.data.dataset)
 
+"""
     def corr_save_dataset_gui(self):
-        """Correct and save single dataset with chosen name"""
+        "Correct and save single dataset with chosen name"
         self.data.savepath = asksaveasfilename(
             parent=self.root, initialfile=self.data.h5key.replace("/", "-") + "-corr.h5"
         )
@@ -203,20 +217,10 @@ class Gui:
             self.load_dataset_info()
             self.data.linear_correction()
             self.save_dataset_info(self.data.dataset_corr)
+"""
 
-    def save_multiple_datasets(self):
-        "Load and save multiple datasets sequentially"
-        save_directory = askdirectory()
-        if save_directory:
-            for h5key in self.selected_h5keys:
-                self.data.h5key = h5key
-                self.data.load_dataset()
-                self.data.savepath = Path(
-                    save_directory, h5key.replace("/", "-") + ".h5"
-                )
-                self.save_dataset_info(self.data.dataset)
 
-    def corr_save_multiple_datasets(self):
+"""    def corr_save_multiple_datasets(self):
         "Load, correct and save multiple datasets sequentially"
         save_directory = askdirectory()
         if save_directory:
@@ -228,7 +232,7 @@ class Gui:
                 )
                 self.data.linear_correction()
                 self.save_dataset_info(self.data.dataset_corr)
-
+"""
 
 if __name__ == "__main__":
     gui = Gui()
