@@ -43,7 +43,7 @@ class Data:
 
     def find_num_batches(self):
         """Find the minimal number of batches for which numpy ndarrays can hold the data"""
-        for num_batches in count(start=4):
+        for num_batches in count(start=1):
             try:
                 self.num_batches = num_batches
                 self.load_dataset_batch()
