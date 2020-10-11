@@ -49,7 +49,7 @@ class Data:
                 self.num_batches = num_batches
                 self.load_dataset_batch()
                 break
-            except ValueError:
+            except (ValueError, MemoryError):
                 pass
 
     ##########
