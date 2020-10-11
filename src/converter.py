@@ -4,7 +4,6 @@
 
 import time
 from pathlib import Path
-from itertools import count
 from tkinter import *
 from tkinter.filedialog import askopenfilename, asksaveasfilename, askdirectory
 
@@ -18,7 +17,6 @@ class Data:
         self.h5key = ""
         self.loadpath = kwargs["loadpath"] if "loadpath" in kwargs else None
         self.savepath = kwargs["savepath"] if "savepath" in kwargs else None
-        self.num_batches = 1
 
     ##########
     # Data Loading
@@ -47,14 +45,13 @@ class Data:
 
     def find_num_batches(self):
         """Find the minimal number of batches for which numpy ndarrays can hold the data"""
-        for num_batches in count(start=1):
+        self.num_batches = 1
+        while True:
             try:
-                self.num_batches = num_batches
                 self.load_dataset_batch()
-                self.num_batches += 1
                 break
             except (ValueError, MemoryError):
-                pass
+                self.num_batches += 1
 
     ##########
     # Data Correction
