@@ -264,7 +264,7 @@ class Gui:
     def handle_batches(self):
         """Load, correct and save batches sequentially"""
         for batch in range(self.data.num_batches):
-            self.data.load_dataset_batch(batch)
+            self.load_dataset_info(batch)
             if self.corr:
                 self.correct_dataset_info()
                 self.save_dataset_info(self.data.dataset_corr, self.corr, batch)
