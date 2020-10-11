@@ -246,7 +246,7 @@ class Gui:
         if save_directory:
             for h5key in self.selected_h5keys:
                 self.data.h5key = h5key
-                self.data.savepath = Path(save_directory, h5key.replace("/", "-"))
+                self.data.savepath = str(Path(save_directory, h5key.replace("/", "-")))
                 self.handle_dataset()
 
     ##########
