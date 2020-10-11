@@ -40,6 +40,7 @@ class Data:
             batch_start = int(batch * dataset_size / self.num_batches)
             batch_end = int((batch + 1) * dataset_size / self.num_batches)
             self.dataset = f[self.h5key][batch_start:batch_end, :, :]
+            print(self.num_batches)
 
     def find_num_batches(self):
         """Find the minimal number of batches for which numpy ndarrays can hold the data"""
