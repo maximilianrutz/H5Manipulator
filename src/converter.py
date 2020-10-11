@@ -8,6 +8,7 @@ from tkinter import *
 from tkinter.filedialog import askopenfilename, asksaveasfilename, askdirectory
 
 import h5py
+import numpy as np
 
 
 class Data:
@@ -40,12 +41,14 @@ class Data:
             batch_end = int((batch + 1) * dataset_size / self.num_batches)
             self.dataset = f[self.h5key][batch_start:batch_end, :, :]
 
-    def find_num_batches(self):
-        """Find the minimal number of batches for which numpy ndarrays can hold the data"""
+    def find_num_batches(self, corr):
+        """Find the minimal number of batches to load and correct the data in RAM"""
         self.num_batches = 1
         while True:
             try:
                 self.load_dataset_batch()
+                if corr:
+                    self.linear_correction()
                 break
             except (ValueError, MemoryError):
                 self.num_batches += 1
@@ -74,8 +77,7 @@ class Data:
         """Use linear offset and linear scale factor to reverse a linear transformation"""
         self.get_linear_offset()
         self.get_linear_scale()
-        self.dataset *= self.linear_scale
-        self.dataset += self.linear_offset
+        self.dataset = self.linear_scale * self.dataset + self.linear_offset
 
     ##########
     # Data Saving
@@ -92,10 +94,10 @@ class Data:
         return savepath
 
     def save_dataset(self, corr, batch):
-        """Save dataset with batch number if more than one batch"""
+        """Save dataset as uint16"""
         savepath = self.full_savepath(corr, batch)
         with h5py.File(savepath, "w") as f:
-            f.create_dataset(self.h5key, data=self.dataset)
+            f.create_dataset(self.h5key, data=self.dataset.astype("uint16"))
 
 
 class Gui:
@@ -154,34 +156,6 @@ class Gui:
         self.dataset_la.pack(side="bottom", fill=X, expand=True)
 
     ##########
-    # Gui keypress functions
-    ##########
-
-    def open_h5(self):
-        """Ask for filepath and load all h5keys from that .h5 file"""
-        self.data.loadpath = askopenfilename(parent=self.root)
-        if self.data.loadpath:
-            self.data.load_h5keys()
-            self.selected_h5keys = []
-            self.update_h5keys_dd()
-            self.dataset_la.config(text="Select Datasets")
-
-    def select_h5key(self, menu_selection):
-        """Add or remove input from OptionMenu to list of selected keys"""
-        if menu_selection not in self.selected_h5keys:
-            self.selected_h5keys.append(menu_selection)
-            self.dataset_la.config(text="Dataset selected")
-        else:
-            self.selected_h5keys.remove(menu_selection)
-            self.dataset_la.config(text="Dataset deselected")
-        self.update_h5keys_dd()
-
-    def save_h5(self, corr):
-        """Handle and save selected datasets"""
-        self.corr = corr
-        self.check_number_of_datasets()
-
-    ##########
     # Gui information label functions
     ##########
 
@@ -218,7 +192,35 @@ class Gui:
         self.dataset_la.config(text=f"Dataset saved in {exec_time:.2f} s")
 
     ##########
-    # Gui after keypress decision tree functions
+    # Gui keypress functions
+    ##########
+
+    def open_h5(self):
+        """Ask for filepath and load all h5keys from that .h5 file"""
+        self.data.loadpath = askopenfilename(parent=self.root)
+        if self.data.loadpath:
+            self.data.load_h5keys()
+            self.selected_h5keys = []
+            self.update_h5keys_dd()
+            self.dataset_la.config(text="Select Datasets")
+
+    def select_h5key(self, menu_selection):
+        """Add or remove input from OptionMenu to list of selected keys"""
+        if menu_selection not in self.selected_h5keys:
+            self.selected_h5keys.append(menu_selection)
+            self.dataset_la.config(text="Dataset selected")
+        else:
+            self.selected_h5keys.remove(menu_selection)
+            self.dataset_la.config(text="Dataset deselected")
+        self.update_h5keys_dd()
+
+    def save_h5(self, corr):
+        """Handle and save selected datasets"""
+        self.corr = corr
+        self.check_number_of_datasets()
+
+    ##########
+    # Gui after keypress functions
     ##########
 
     def check_number_of_datasets(self):
@@ -255,7 +257,7 @@ class Gui:
     def handle_dataset(self):
         """Load, correct and save a single dataset and split it into batches if necessary"""
         self.dataset_la.config(text="Finding number of load batches")
-        self.data.find_num_batches()
+        self.data.find_num_batches(self.corr)
         self.handle_batches()
 
     def handle_batches(self):
