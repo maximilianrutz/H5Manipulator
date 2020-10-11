@@ -35,13 +35,9 @@ class Data:
     def load_dataset_batch(self, batch=0):
         """Load batches of dataset for given h5key from .h5 file"""
         with h5py.File(self.loadpath, "r") as f:
-
             dataset_size = f[self.h5key].shape[0]
             batch_start = int(batch * dataset_size / self.num_batches)
             batch_end = int((batch + 1) * dataset_size / self.num_batches)
-            print(self.num_batches)
-            print(batch)
-            print(dataset_size)
             self.dataset = f[self.h5key][batch_start:batch_end, :, :]
 
     def find_num_batches(self):
@@ -78,13 +74,13 @@ class Data:
         """Use linear offset and linear scale factor to reverse a linear transformation"""
         self.get_linear_offset()
         self.get_linear_scale()
-        self.dataset_corr = self.linear_offset + self.linear_scale * self.dataset
+        self.dataset = self.linear_offset + self.linear_scale * self.dataset
 
     ##########
     # Data Saving
     ##########
 
-    def full_savepath(self, dataset, corr, batch):
+    def full_savepath(self, corr, batch):
         """Create full savepath depending on correction and batches"""
         savepath = self.savepath
         if corr:
@@ -94,11 +90,11 @@ class Data:
         savepath += ".h5"
         return savepath
 
-    def save_dataset(self, dataset, corr, batch):
+    def save_dataset(self, corr, batch):
         """Save dataset with batch number if more than one batch"""
-        savepath = self.full_savepath(dataset, corr, batch)
+        savepath = self.full_savepath(corr, batch)
         with h5py.File(savepath, "w") as f:
-            f.create_dataset(self.h5key, data=dataset)
+            f.create_dataset(self.h5key, data=self.dataset)
 
 
 class Gui:
@@ -211,12 +207,12 @@ class Gui:
         exec_time = time.time() - time_start
         self.dataset_la.config(text=f"Dataset corrected in {exec_time:.2f} s")
 
-    def save_dataset_info(self, dataset, corr, batch):
+    def save_dataset_info(self, batch):
         """Show information while saving dataset"""
         self.dataset_la.config(text=f"Saving {self.data.h5key}")
         self.dataset_la.update()
         time_start = time.time()
-        self.data.save_dataset(dataset, corr, batch)
+        self.data.save_dataset(self.corr, batch)
         exec_time = time.time() - time_start
         self.dataset_la.config(text=f"Dataset saved in {exec_time:.2f} s")
 
@@ -231,7 +227,7 @@ class Gui:
         elif len(self.selected_h5keys) > 1:
             self.multiple_datasets()
         else:
-            self.dataset_la.config(text=f"No dataset selected")
+            self.dataset_la.config(text="No dataset selected")
 
     def single_dataset(self):
         """For a single dataset a full filename for saving can be chosen"""
@@ -257,8 +253,8 @@ class Gui:
 
     def handle_dataset(self):
         """Load, correct and save a single dataset and split it into batches if necessary"""
-        # self.dataset_la.config(text=f"Finding number of load batches")
-        # self.data.find_num_batches()
+        self.dataset_la.config(text="Finding number of load batches")
+        self.data.find_num_batches()
         self.handle_batches()
 
     def handle_batches(self):
@@ -267,9 +263,9 @@ class Gui:
             self.load_dataset_info(batch)
             if self.corr:
                 self.correct_dataset_info()
-                self.save_dataset_info(self.data.dataset_corr, self.corr, batch)
+                self.save_dataset_info(batch)
             else:
-                self.save_dataset_info(self.data.dataset, self.corr, batch)
+                self.save_dataset_info(batch)
 
 
 if __name__ == "__main__":
