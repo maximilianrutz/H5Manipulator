@@ -17,6 +17,7 @@ class Data:
         self.h5key = ""
         self.loadpath = kwargs["loadpath"] if "loadpath" in kwargs else None
         self.savepath = kwargs["savepath"] if "savepath" in kwargs else None
+        self.num_batches = 1
 
     ##########
     # Data Loading
@@ -162,10 +163,11 @@ class Gui:
     def open_h5(self):
         """Ask for filepath and load all h5keys from that .h5 file"""
         self.data.loadpath = askopenfilename(parent=self.root)
-        self.data.load_h5keys()
-        self.selected_h5keys = []
-        self.update_h5keys_dd()
-        self.dataset_la.config(text="Select Datasets")
+        if self.data.loadpath:
+            self.data.load_h5keys()
+            self.selected_h5keys = []
+            self.update_h5keys_dd()
+            self.dataset_la.config(text="Select Datasets")
 
     def select_h5key(self, menu_selection):
         """Add or remove input from OptionMenu to list of selected keys"""
@@ -255,8 +257,8 @@ class Gui:
 
     def handle_dataset(self):
         """Load, correct and save a single dataset and split it into batches if necessary"""
-        self.dataset_la.config(text=f"Finding number of load batches")
-        self.data.find_num_batches()
+        # self.dataset_la.config(text=f"Finding number of load batches")
+        # self.data.find_num_batches()
         self.handle_batches()
 
     def handle_batches(self):
