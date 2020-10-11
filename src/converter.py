@@ -74,7 +74,8 @@ class Data:
         """Use linear offset and linear scale factor to reverse a linear transformation"""
         self.get_linear_offset()
         self.get_linear_scale()
-        self.dataset = self.linear_offset + self.linear_scale * self.dataset
+        self.dataset *= self.linear_scale
+        self.dataset += self.linear_offset
 
     ##########
     # Data Saving
