@@ -256,7 +256,7 @@ class Gui:
 
     def handle_dataset(self):
         """Load, correct and save a single dataset and split it into batches if necessary"""
-        self.dataset_la.config(text="Finding number of load batches")
+        self.dataset_la.config(text="Finding necessary number of batches")
         self.data.find_num_batches(self.corr)
         self.handle_batches()
 
