@@ -37,6 +37,7 @@ class Data:
         """Load batches of dataset for given h5key from .h5 file"""
         with h5py.File(self.loadpath, "r") as f:
             print(self.num_batches)
+            print(batch)
             dataset_size = f[self.h5key].shape[0]
             batch_start = int(batch * dataset_size / self.num_batches)
             batch_end = int((batch + 1) * dataset_size / self.num_batches)
