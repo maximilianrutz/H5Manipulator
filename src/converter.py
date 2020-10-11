@@ -165,6 +165,7 @@ class Gui:
         self.data.load_h5keys()
         self.selected_h5keys = []
         self.update_h5keys_dd()
+        self.dataset_la.config(text="Select Datasets")
 
     def select_h5key(self, menu_selection):
         """Add or remove input from OptionMenu to list of selected keys"""
