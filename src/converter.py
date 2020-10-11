@@ -49,7 +49,7 @@ class Data:
                 self.num_batches = num_batches
                 self.load_dataset_batch()
                 break
-            except ValueError:
+            except (ValueError, MemoryError):
                 pass
 
     ##########
@@ -253,7 +253,7 @@ class Gui:
 
     def handle_dataset(self):
         """Load, correct and save a single dataset and split it into batches if necessary"""
-        self.dataset_la.config(text=f"Finding number of load batches...")
+        self.dataset_la.config(text=f"Finding number of load batches")
         self.data.find_num_batches()
         self.handle_batches()
 
