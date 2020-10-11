@@ -36,13 +36,14 @@ class Data:
     def load_dataset_batch(self, batch=0):
         """Load batches of dataset for given h5key from .h5 file"""
         with h5py.File(self.loadpath, "r") as f:
-            print(self.num_batches)
-            print(batch)
+
             dataset_size = f[self.h5key].shape[0]
             batch_start = int(batch * dataset_size / self.num_batches)
             batch_end = int((batch + 1) * dataset_size / self.num_batches)
+            print(self.num_batches)
+            print(batch)
+            print(dataset_size)
             self.dataset = f[self.h5key][batch_start:batch_end, :, :]
-            print(self.dataset.shape)
 
     def find_num_batches(self):
         """Find the minimal number of batches for which numpy ndarrays can hold the data"""
@@ -50,6 +51,7 @@ class Data:
             try:
                 self.num_batches = num_batches
                 self.load_dataset_batch()
+                self.num_batches += 1
                 break
             except (ValueError, MemoryError):
                 pass
